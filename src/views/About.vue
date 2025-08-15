@@ -1,8 +1,8 @@
 <template>
   <div class="about">
-    <Header />
 
-    <main class="content container">
+
+    <main class="content container-fluid">
       <h2 class="page-title">关于我</h2>
       <div class="about-content">
         <div class="profile-card">
@@ -58,7 +58,6 @@
       </div>
     </main>
 
-    <Footer />
   </div>
 </template>
 
@@ -73,6 +72,13 @@ import Footer from '../components/Footer.vue'
   flex-direction: column;
   min-height: 100vh;
   background-color: #f9f9f9;
+}
+
+.container-fluid {
+  width: 80%;
+  max-width: 80%;
+  padding: 0 1rem;
+  margin: 0 auto;
 }
 
 .container {

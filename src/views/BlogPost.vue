@@ -1,8 +1,6 @@
 <template>
   <div class="blog-post">
-    <Header />
-
-    <main class="content container">
+    <main class="content container-fluid">
       <div v-if="post" class="post">
         <div class="post-header">
           <h2 class="post-title">{{ post.title }}</h2>
@@ -63,7 +61,6 @@
       </div>
     </main>
 
-    <Footer />
   </div>
 </template>
 
@@ -72,8 +69,6 @@ import { ref, computed, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { marked } from 'marked'
 import { getPostById, getPosts } from '../api/postApi'
-import Header from '../components/Header.vue'
-import Footer from '../components/Footer.vue'
 
 const route = useRoute()
 const router = useRouter()
@@ -152,6 +147,13 @@ const submitComment = () => {
 .content {
   flex: 1;
   padding: 2rem 0;
+}
+
+.container-fluid {
+  width: 80%;
+  max-width: 80%;
+  padding: 0 1rem;
+  margin: 0 auto;
 }
 
 .post {

@@ -1,14 +1,20 @@
 <script setup>
+import Header from './components/Header.vue'
+import Footer from './components/Footer.vue'
 // 全局应用入口
 </script>
 
 <template>
   <div class="app">
-    <router-view v-slot="{ Component }">
-      <transition name="page-transition" mode="out-in">
-        <component :is="Component" :key="$route.fullPath" />
-      </transition>
-    </router-view>
+    <Header />
+    <main class="main-content">
+      <router-view v-slot="{ Component }">
+        <transition name="page-transition" mode="out-in">
+          <component :is="Component" :key="$route.fullPath" />
+        </transition>
+      </router-view>
+    </main>
+    <Footer />
   </div>
 </template>
 
@@ -18,6 +24,16 @@
   min-height: 100vh;
   display: flex;
   flex-direction: column;
+  background-color: var(--color-background);
+  width: 100%;
+  max-width: 100%;
+}
+
+.main-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
 }
 
 /* 页面过渡动画 */
@@ -68,8 +84,8 @@ html {
 }
 
 body {
-  background-color: #f9f9f9;
-  color: #333;
+  background-color: var(--color-background);
+  color: var(--color-text);
   line-height: 1.6;
 }
 </style>
