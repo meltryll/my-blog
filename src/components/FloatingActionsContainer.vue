@@ -6,7 +6,13 @@ import { defineProps, defineEmits } from 'vue'
 const props = defineProps({
   sidebarOpen: {
     type: Boolean,
-    required: true
+    required: false,
+    default: false
+  },
+  showToggle: {
+    type: Boolean,
+    required: false,
+    default: true
   }
 })
 
@@ -19,10 +25,12 @@ const handleToggleSidebar = () => {
 
 <template>
   <div class="floating-actions-container">
-    <FloatingSidebarToggle
-      :is-open="sidebarOpen"
-      @toggle="handleToggleSidebar"
-    />
+    <template v-if="showToggle">
+      <FloatingSidebarToggle
+        :is-open="sidebarOpen"
+        @toggle="handleToggleSidebar"
+      />
+    </template>
     <BackToTop />
   </div>
 </template>

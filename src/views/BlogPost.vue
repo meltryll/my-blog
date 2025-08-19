@@ -61,6 +61,7 @@
       </div>
     </main>
 
+    <FloatingActionsContainer :show-toggle="false" />
   </div>
 </template>
 
@@ -69,6 +70,7 @@ import { ref, computed, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { marked } from 'marked'
 import { getPostById, getPosts } from '../api/postApi'
+import FloatingActionsContainer from '../components/FloatingActionsContainer.vue'
 
 const route = useRoute()
 const router = useRouter()

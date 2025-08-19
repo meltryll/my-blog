@@ -48,20 +48,25 @@
           </section>
         </main>
 
-        <aside class="sidebar-container" :class="{ 'sidebar-open': sidebarOpen, 'sidebar-closed': !sidebarOpen && isSmallScreen }">
+        <aside class="sidebar-container" :class="{ 'sidebar-open': sidebarOpenLocal, 'sidebar-closed': !sidebarOpenLocal && isSmallScreen }">
           <Sidebar />
         </aside>
 
-
+        <FloatingActionsContainer
+          :sidebar-open="sidebarOpenLocal"
+          :show-toggle="true"
+          @toggle-sidebar="toggleSidebar"
+        />
       </div>
     </div>
   </div>
 </template>
 
 <script setup>
-import { ref, onMounted, onBeforeUnmount, defineProps } from 'vue'
+import { ref, onMounted, onBeforeUnmount, defineProps, watch } from 'vue'
 import { getPosts } from '../api/postApi'
 import Sidebar from '../components/Sidebar.vue'
+import FloatingActionsContainer from '../components/FloatingActionsContainer.vue'
 
 const props = defineProps({
   sidebarOpen: {
@@ -73,6 +78,19 @@ const props = defineProps({
     required: true
   }
 })
+
+// 侧边栏状态管理
+const sidebarOpenLocal = ref(props.sidebarOpen)
+
+// 监听props变化
+watch(() => props.sidebarOpen, (newValue) => {
+  sidebarOpenLocal.value = newValue
+})
+
+// 切换侧边栏
+const toggleSidebar = () => {
+  sidebarOpenLocal.value = !sidebarOpenLocal.value
+}
 
 // 最新文章数据
 const latestPosts = ref([])

@@ -2,7 +2,6 @@
   import { ref, onMounted, onBeforeUnmount } from 'vue'
   import Header from './components/Header.vue'
   import Footer from './components/Footer.vue'
-  import FloatingActionsContainer from './components/FloatingActionsContainer.vue'
 
   // 侧边栏状态管理
   const sidebarOpen = ref(false)
@@ -28,10 +27,7 @@
     window.removeEventListener('resize', handleResize)
   })
 
-  // 切换侧边栏
-  const toggleSidebar = () => {
-    sidebarOpen.value = !sidebarOpen.value
-  }
+  // 切换侧边栏功能已移至各页面组件中实现
 // 全局应用入口
 </script>
 
@@ -51,10 +47,6 @@
         </router-view>
     </main>
     <Footer />
-      <FloatingActionsContainer
-        :sidebar-open="sidebarOpen"
-        @toggle-sidebar="toggleSidebar"
-      />
   </div>
 </template>
 

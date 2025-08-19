@@ -39,12 +39,14 @@
       </div>
     </main>
 
+    <FloatingActionsContainer :show-toggle="false" />
   </div>
 </template>
 
 <script setup>
 import { ref, computed, onMounted } from 'vue'
 import { getPosts, getCategories } from '../api/postApi'
+import FloatingActionsContainer from '../components/FloatingActionsContainer.vue'
 
 // 博客文章数据
 const posts = ref([])
