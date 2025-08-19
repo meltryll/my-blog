@@ -43,9 +43,6 @@ onBeforeUnmount(() => {
 
 <style scoped>
 .back-to-top {
-  position: fixed;
-  bottom: 4rem; /* 与侧边栏切换按钮保持距离 */
-  right: 0.5rem;
   width: 40px;
   height: 40px;
   border-radius: 12px; /* 改为圆角矩形 */
@@ -58,7 +55,6 @@ onBeforeUnmount(() => {
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  z-index: 999;
   transition: all 0.3s ease;
   opacity: 0;
   transform: translateY(20px);

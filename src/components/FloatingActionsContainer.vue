@@ -41,8 +41,8 @@ const handleToggleSidebar = () => {
   bottom: 2rem;
   right: 2rem;
   display: flex;
-  flex-direction: column;
-  gap: 1rem;
+  flex-direction: column-reverse;
+  gap: 0.5rem;
   z-index: 1000;
 }
 

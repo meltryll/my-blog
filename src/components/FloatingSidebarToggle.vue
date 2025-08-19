@@ -33,9 +33,6 @@ const handleToggle = () => {
 
 <style scoped>
 .floating-sidebar-toggle {
-  position: fixed;
-  bottom: 1rem;
-  right: 0.5rem;
   width: 40px;
   height: 40px;
   border-radius: 50%;
@@ -48,7 +45,6 @@ const handleToggle = () => {
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  z-index: 1000;
   transition: all 0.3s ease;
 }
 
