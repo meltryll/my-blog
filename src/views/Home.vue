@@ -3,12 +3,26 @@
     <div class="container-full">
       <div class="content-wrapper">
         <main class="main-content">
-          <section class="hero">
+          <section class="hero" ref="heroSection">
             <div class="hero-overlay"></div>
+            <div class="hero-background"></div>
             <div class="hero-content">
               <h2 class="hero-title">欢迎访问我的个人博客</h2>
               <p class="hero-subtitle">分享我的学习心得、技术见解和生活点滴</p>
               <router-link to="/blog" class="btn btn-primary">查看博客</router-link>
+            </div>
+          </section>
+
+          <section class="features parallax-section" ref="featuresSection">
+            <div class="container-full">
+              <h3 class="section-title">我的专长</h3>
+              <div class="features-grid">
+                <div class="feature-card" v-for="feature in features" :key="feature.id">
+                  <div class="feature-icon"><i :class="feature.icon"></i></div>
+                  <h4 class="feature-title">{{ feature.title }}</h4>
+                  <p class="feature-description">{{ feature.description }}</p>
+                </div>
+              </div>
             </div>
           </section>
 
@@ -34,22 +48,96 @@
           </section>
         </main>
 
-        <aside class="sidebar-container">
+        <aside class="sidebar-container" :class="{ 'sidebar-open': sidebarOpen, 'sidebar-closed': !sidebarOpen && isSmallScreen }">
           <Sidebar />
         </aside>
+
+        <FloatingSidebarToggle
+          :is-open="sidebarOpen"
+          @toggle="toggleSidebar"
+        />
       </div>
     </div>
   </div>
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, onBeforeUnmount, watch } from 'vue'
 import { getPosts } from '../api/postApi'
 import Sidebar from '../components/Sidebar.vue'
+import FloatingSidebarToggle from '../components/FloatingSidebarToggle.vue'
 
 // 最新文章数据
 const latestPosts = ref([])
 const loading = ref(true)
+
+// 特色内容数据
+const features = ref([
+  { id: 1, title: 'Web开发', icon: 'fas fa-code', description: '精通HTML、CSS和JavaScript，专注于构建响应式和交互式网站。' },
+  { id: 2, title: 'Vue.js', icon: 'fab fa-vuejs', description: '熟练使用Vue.js框架开发单页应用，熟悉Composition API和Vuex。' },
+  { id: 3, title: 'UI/UX设计', icon: 'fas fa-paint-brush', description: '注重用户体验，能够创建美观且功能完善的界面设计。' }
+])
+
+// 视差效果 refs
+const heroSection = ref(null)
+const featuresSection = ref(null)
+
+// 侧边栏状态管理
+const sidebarOpen = ref(false)
+const isSmallScreen = ref(window.innerWidth < 993)
+
+// 监听窗口大小变化
+const handleResize = () => {
+  isSmallScreen.value = window.innerWidth < 993
+  // 在大屏幕上自动打开侧边栏
+  if (!isSmallScreen.value) {
+    sidebarOpen.value = true
+  }
+}
+
+// 初始化和清理事件监听
+onMounted(() => {
+  window.addEventListener('resize', handleResize)
+  // 初始化侧边栏状态
+  sidebarOpen.value = !isSmallScreen.value
+})
+
+onBeforeUnmount(() => {
+  window.removeEventListener('resize', handleResize)
+})
+
+// 切换侧边栏
+const toggleSidebar = () => {
+  sidebarOpen.value = !sidebarOpen.value
+}
+
+// 视差滚动处理函数
+const handleParallax = () => {
+  if (heroSection.value && featuresSection.value) {
+    const scrollY = window.scrollY
+    
+    // 英雄区域视差
+    const heroBg = heroSection.value.querySelector('.hero-background')
+    heroBg.style.transform = `translateY(${scrollY * 0.5}px)`
+    
+    // 特色区域视差
+    const featuresOffset = featuresSection.value.offsetTop
+    const featuresDistance = scrollY - featuresOffset
+    if (featuresDistance > -300 && featuresDistance < 600) {
+      featuresSection.value.style.backgroundPositionY = `${featuresDistance * 0.3}px`
+    }
+  }
+}
+
+// 注册滚动事件
+onMounted(() => {
+  window.addEventListener('scroll', handleParallax)
+})
+
+// 清理事件监听
+onBeforeUnmount(() => {
+  window.removeEventListener('scroll', handleParallax)
+})
 
 // 获取最新文章
 onMounted(async () => {
@@ -96,6 +184,52 @@ onMounted(async () => {
   max-width: 1600px;
   margin: 0 auto;
   width: 100%;
+}
+
+.sidebar-container {
+  width: 300px;
+  flex-shrink: 0;
+  transition: transform 0.3s ease, width 0.3s ease, visibility 0.3s ease, opacity 0.3s ease;
+}
+
+.sidebar-closed {
+  width: 0;
+  transform: translateX(300px);
+  overflow: hidden;
+  visibility: hidden;
+  opacity: 0;
+}
+
+.sidebar-open {
+  transform: translateX(0);
+  visibility: visible;
+  opacity: 1;
+}
+
+@media (max-width: 992px) {
+  .content-wrapper {
+    gap: 0;
+  }
+
+  .sidebar-container {
+    position: fixed;
+    top: 0;
+    right: 0;
+    height: 100vh;
+    z-index: 900;
+    background-color: var(--color-background);
+    box-shadow: -5px 0 15px rgba(0, 0, 0, 0.1);
+    padding-top: 60px;
+    transform: translateX(300px);
+    visibility: hidden;
+    opacity: 0;
+  }
+
+  .sidebar-container.sidebar-open {
+    transform: translateX(0);
+    visibility: visible;
+    opacity: 1;
+  }
 }
 
 .main-content {
@@ -179,13 +313,55 @@ onMounted(async () => {
 /* 英雄区域样式 */
 .hero {
   position: relative;
-  height: 60vh;
-  min-height: 400px;
+  height: 70vh;
+  min-height: 500px;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(135deg, var(--color-primary) 0%, #764ba2 100%);
   overflow: hidden;
+} 
+
+.hero-background {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 120%;
+  background: linear-gradient(135deg, var(--color-primary) 0%, #764ba2 100%);
+  z-index: 0;
+  transform: translateY(0);
+  transition: transform 0.1s ease-out;
+} 
+
+.hero-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-image: url('data:image/svg+xml,%3Csvg width="60" height="60" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg"%3E%3Cg fill="none" fill-rule="evenodd"%3E%3Cg fill="%23ffffff" fill-opacity="0.1"%3E%3Cpath d="M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z"/%3E%3C/g%3E%3C/g%3E%3C/svg%3E');
+  z-index: 1;
+} 
+
+.hero-content {
+  position: relative;
+  z-index: 2;
+  text-align: center;
+  color: white;
+  padding: 2rem;
+  animation: fadeIn 1s ease-out, slideUp 0.8s ease-out 0.2s both;
+  max-width: 800px;
+  margin: 0 auto;
+} 
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+} 
+
+@keyframes slideUp {
+  from { transform: translateY(30px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
 }
 
 .hero-overlay {
@@ -241,8 +417,63 @@ onMounted(async () => {
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
+.features {
+  padding: 6rem 0;
+  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+  background-attachment: fixed;
+  position: relative;
+}
+
+.parallax-section {
+  overflow: hidden;
+}
+
+.features-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 2.5rem;
+  margin-top: 3rem;
+}
+
+.feature-card {
+  background-color: white;
+  border-radius: 8px;
+  padding: 2rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  text-align: center;
+}
+
+.feature-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+}
+
+.feature-icon {
+  font-size: 3rem;
+  color: var(--color-primary);
+  margin-bottom: 1.5rem;
+  transition: transform 0.3s ease;
+}
+
+.feature-card:hover .feature-icon {
+  transform: scale(1.1) rotate(5deg);
+}
+
+.feature-title {
+  font-size: 1.5rem;
+  margin-bottom: 1rem;
+  color: var(--color-text);
+}
+
+.feature-description {
+  color: #666;
+  line-height: 1.6;
+}
+
 .latest-posts {
-  padding: 4rem 0;
+  padding: 6rem 0;
+  background-color: var(--color-background);
 }
 
 .section-title {

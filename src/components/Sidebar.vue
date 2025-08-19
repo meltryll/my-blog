@@ -70,7 +70,17 @@ const navigateToCategory = (category) => {
   background-color: var(--color-background);
   border-radius: 8px;
   box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
-  height: fit-content;
+  height: 100%;
+  overflow-y: auto;
+}
+
+/* 窄屏样式调整 */
+@media (max-width: 992px) {
+  .sidebar {
+    max-width: 100%;
+    border-radius: 0;
+    height: 100%;
+  }
 }
 
 .sidebar-section {
