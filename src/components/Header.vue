@@ -10,9 +10,9 @@ const drawerOpen = ref(false)
 
 // 菜单数据
 const menuItems = [
-  { path: '/', label: '首页' },
-  { path: '/about', label: '关于我' },
-  { path: '/blog', label: '博客' }
+  { path: '/', label: '首页', icon: 'fas fa-home' },
+  { path: '/about', label: '关于我', icon: 'fas fa-user' },
+  { path: '/blog', label: '博客', icon: 'fas fa-blog' }
 ]
 
 // 导航到指定路径
@@ -25,41 +25,49 @@ const navigateTo = (path) => {
 <template>
   <header class="header">
     <div class="header-content container-full">
-      <h1 class="blog-title">个人博客</h1>
+      <div class="header-left">
+        <div class="blog-logo-title">
+          <i class="fas fa-feather-alt blog-icon"></i>
+          <h1 class="blog-title">个人博客</h1>
+        </div>
+        <p class="blog-tagline">分享知识，记录生活</p>
+      </div>
 
-      <!-- 桌面导航 -->
-      <nav class="nav desktop-nav">
-        <ul class="nav-list">
-          <li v-for="item in menuItems" :key="item.path" class="nav-item">
-            <router-link :to="item.path" class="nav-link">{{ item.label }}</router-link>
-          </li>
-        </ul>
-      </nav>
+      <div class="header-right">
+        <!-- 主题切换按钮 -->
+        <button class="theme-toggle" @click="toggleTheme" aria-label="切换主题">
+          <i :class="currentTheme === 'light' ? 'fas fa-moon' : 'fas fa-sun'"></i>
+        </button>
 
-      <!-- 主题切换按钮 -->
-      <button class="theme-toggle" @click="toggleTheme" aria-label="切换主题">
-        <i :class="currentTheme === 'light' ? 'fas fa-moon' : 'fas fa-sun'"></i>
-      </button>
-
-      <!-- 移动端菜单按钮 -->
-      <button class="menu-toggle" @click="drawerOpen = !drawerOpen" aria-label="打开菜单">
-        <i class="fas fa-bars"></i>
-      </button>
+        <!-- 移动端菜单按钮 -->
+        <button class="menu-toggle" @click="drawerOpen = !drawerOpen" aria-label="打开菜单">
+          <i class="fas fa-bars"></i>
+        </button>
+      </div>
     </div>
 
     <!-- 抽屉导航 -->
     <div class="drawer" :class="{ 'drawer-open': drawerOpen }">
       <div class="drawer-content">
-        <button class="close-drawer" @click="drawerOpen = false" aria-label="关闭菜单">
-          <i class="fas fa-times"></i>
-        </button>
+        <div class="drawer-header">
+          <h2 class="drawer-title">导航菜单</h2>
+          <button class="close-drawer" @click="drawerOpen = false" aria-label="关闭菜单">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
         <nav class="mobile-nav">
           <ul class="nav-list">
             <li v-for="item in menuItems" :key="item.path" class="nav-item">
-              <button @click="navigateTo(item.path)" class="nav-link">{{ item.label }}</button>
+              <button @click="navigateTo(item.path)" class="nav-link">
+                <i :class="item.icon"></i>
+                <span>{{ item.label }}</span>
+              </button>
             </li>
           </ul>
         </nav>
+        <div class="drawer-footer">
+          <p class="copyright">&copy; {{ new Date().getFullYear() }} 个人博客</p>
+        </div>
       </div>
     </div>
 
@@ -103,7 +111,7 @@ const navigateTo = (path) => {
   font-size: 1.5rem;
   cursor: pointer;
   padding: 0.5rem;
-  display: none;
+  display: block;
 }
 
 /* 抽屉导航 */
@@ -113,10 +121,11 @@ const navigateTo = (path) => {
   right: -300px;
   width: 300px;
   height: 100vh;
-  background-color: var(--color-card);
-  box-shadow: -2px 0 10px rgba(0, 0, 0, 0.1);
-  transition: right 0.3s ease;
+  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+  box-shadow: -5px 0 20px rgba(0, 0, 0, 0.15);
+  transition: right 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
   z-index: 500;
+  overflow: hidden;
 }
 
 .drawer-open {
@@ -130,6 +139,25 @@ const navigateTo = (path) => {
   flex-direction: column;
 }
 
+.drawer-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.drawer-title {
+  font-size: 1.5rem;
+  margin: 0;
+  background: linear-gradient(to right, #764ba2, #667eea);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  font-weight: 700;
+}
+
 .close-drawer {
   align-self: flex-end;
   background: transparent;
@@ -138,6 +166,26 @@ const navigateTo = (path) => {
   color: var(--color-text);
   cursor: pointer;
   padding: 0.5rem;
+  transition: transform 0.3s ease, color 0.3s ease;
+}
+
+.close-drawer:hover {
+  transform: rotate(90deg);
+  color: #764ba2;
+}
+
+.drawer-footer {
+  padding-top: 1rem;
+  border-top: 1px solid rgba(0, 0, 0, 0.1);
+  margin-top: 2rem;
+}
+
+.drawer-footer .copyright {
+  font-size: 0.9rem;
+  color: #666;
+  text-align: center;
+  margin: 0;
+  padding: 1rem 0;
 }
 
 .overlay {
@@ -169,12 +217,47 @@ const navigateTo = (path) => {
 
 .mobile-nav .nav-link {
   color: var(--color-text);
-  display: block;
+  display: flex;
+  align-items: center;
   width: 100%;
   text-align: left;
-  padding: 0.8rem;
+  padding: 0.8rem 1rem;
   border-radius: 8px;
-  transition: background-color 0.3s ease;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.mobile-nav .nav-link i {
+  margin-right: 10px;
+  font-size: 1.2rem;
+  width: 24px;
+  text-align: center;
+}
+
+.mobile-nav .nav-link span {
+  position: relative;
+  z-index: 1;
+}
+
+.mobile-nav .nav-link::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(118, 75, 162, 0.1);
+  transition: left 0.3s ease;
+}
+
+.mobile-nav .nav-link:hover {
+  color: #764ba2;
+  transform: translateX(5px);
+}
+
+.mobile-nav .nav-link:hover::before {
+  left: 0;
 }
 
 .mobile-nav .nav-link:hover {
@@ -199,11 +282,11 @@ const navigateTo = (path) => {
 
 @media (min-width: 769px) {
   .drawer {
-    display: none;
+    display: block;
   }
 
   .overlay {
-    display: none;
+    display: block;
   }
 }
 
@@ -215,7 +298,59 @@ const navigateTo = (path) => {
   z-index: 2;
   width: 100%;
   max-width: 100%;
-  padding: 0 1rem;
+  padding: 0 1.5rem;
+}
+
+.header-left {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.blog-logo-title {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+}
+
+.blog-icon {
+  font-size: 1.8rem;
+  color: #fff;
+  opacity: 0.9;
+}
+
+.blog-tagline {
+  font-size: 0.9rem;
+  color: rgba(255, 255, 255, 0.85);
+  margin: 0.3rem 0 0 0;
+  font-weight: 300;
+}
+
+@media (max-width: 768px) {
+  .header-left {
+    align-items: center;
+    text-align: center;
+  }
+}
+
+.header-right {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+}
+
+@media (max-width: 768px) {
+  .header-content {
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .header-left,
+  .header-right {
+    width: 100%;
+    justify-content: center;
+    align-items: center;
+  }
 }
 
 .container-full {

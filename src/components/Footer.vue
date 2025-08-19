@@ -9,14 +9,18 @@ const { currentTheme } = useThemeStore()
   <footer class="footer" :class="currentTheme">
     <div class="container-full">
       <div class="footer-content">
-        <div class="footer-info">
-          <h3 class="footer-title">个人博客</h3>
-          <p class="footer-description">分享我的知识、经验和见解</p>
+        <div class="footer-left">
+          <div class="footer-info">
+            <h3 class="footer-title">个人博客</h3>
+            <p class="footer-description">分享我的知识、经验和见解</p>
+          </div>
         </div>
-        <div class="social-links">
-          <a href="#" class="social-link"><i class="fab fa-github"></i></a>
-          <a href="#" class="social-link"><i class="fab fa-twitter"></i></a>
-          <a href="#" class="social-link"><i class="fab fa-linkedin"></i></a>
+        <div class="footer-right">
+          <div class="social-links">
+            <a href="#" class="social-link"><i class="fab fa-github"></i></a>
+            <a href="#" class="social-link"><i class="fab fa-twitter"></i></a>
+            <a href="#" class="social-link"><i class="fab fa-linkedin"></i></a>
+          </div>
         </div>
       </div>
       <p class="copyright">&copy; {{ new Date().getFullYear() }} 个人博客. 保留所有权利.</p>
@@ -38,8 +42,36 @@ const { currentTheme } = useThemeStore()
   justify-content: space-between;
   align-items: center;
   margin-bottom: 1.5rem;
-  flex-wrap: wrap;
-  gap: 1.5rem;
+  width: 100%;
+}
+
+.footer-left {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.footer-right {
+  display: flex;
+  gap: 1.2rem;
+}
+
+@media (max-width: 768px) {
+  .footer-content {
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  .footer-left,
+  .footer-right {
+    width: 100%;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .footer-info {
+    text-align: center;
+  }
 }
 
 .footer-info {
