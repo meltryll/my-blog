@@ -52,20 +52,27 @@
           <Sidebar />
         </aside>
 
-        <FloatingSidebarToggle
-          :is-open="sidebarOpen"
-          @toggle="toggleSidebar"
-        />
+
       </div>
     </div>
   </div>
 </template>
 
 <script setup>
-import { ref, onMounted, onBeforeUnmount, watch } from 'vue'
+import { ref, onMounted, onBeforeUnmount, defineProps } from 'vue'
 import { getPosts } from '../api/postApi'
 import Sidebar from '../components/Sidebar.vue'
-import FloatingSidebarToggle from '../components/FloatingSidebarToggle.vue'
+
+const props = defineProps({
+  sidebarOpen: {
+    type: Boolean,
+    required: true
+  },
+  isSmallScreen: {
+    type: Boolean,
+    required: true
+  }
+})
 
 // 最新文章数据
 const latestPosts = ref([])
@@ -82,34 +89,12 @@ const features = ref([
 const heroSection = ref(null)
 const featuresSection = ref(null)
 
-// 侧边栏状态管理
-const sidebarOpen = ref(false)
-const isSmallScreen = ref(window.innerWidth < 993)
-
-// 监听窗口大小变化
-const handleResize = () => {
-  isSmallScreen.value = window.innerWidth < 993
-  // 在大屏幕上自动打开侧边栏
-  if (!isSmallScreen.value) {
-    sidebarOpen.value = true
-  }
-}
-
 // 初始化和清理事件监听
 onMounted(() => {
-  window.addEventListener('resize', handleResize)
-  // 初始化侧边栏状态
-  sidebarOpen.value = !isSmallScreen.value
 })
 
 onBeforeUnmount(() => {
-  window.removeEventListener('resize', handleResize)
 })
-
-// 切换侧边栏
-const toggleSidebar = () => {
-  sidebarOpen.value = !sidebarOpen.value
-}
 
 // 视差滚动处理函数
 const handleParallax = () => {

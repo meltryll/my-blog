@@ -1,6 +1,37 @@
 <script setup>
-import Header from './components/Header.vue'
-import Footer from './components/Footer.vue'
+  import { ref, onMounted, onBeforeUnmount } from 'vue'
+  import Header from './components/Header.vue'
+  import Footer from './components/Footer.vue'
+  import FloatingActionsContainer from './components/FloatingActionsContainer.vue'
+
+  // 侧边栏状态管理
+  const sidebarOpen = ref(false)
+  const isSmallScreen = ref(window.innerWidth < 993)
+
+  // 监听窗口大小变化
+  const handleResize = () => {
+    isSmallScreen.value = window.innerWidth < 993
+    // 在大屏幕上自动打开侧边栏
+    if (!isSmallScreen.value) {
+      sidebarOpen.value = true
+    }
+  }
+
+  // 初始化和清理事件监听
+  onMounted(() => {
+    window.addEventListener('resize', handleResize)
+    // 初始化侧边栏状态
+    sidebarOpen.value = !isSmallScreen.value
+  })
+
+  onBeforeUnmount(() => {
+    window.removeEventListener('resize', handleResize)
+  })
+
+  // 切换侧边栏
+  const toggleSidebar = () => {
+    sidebarOpen.value = !sidebarOpen.value
+  }
 // 全局应用入口
 </script>
 
@@ -9,12 +40,21 @@ import Footer from './components/Footer.vue'
     <Header />
     <main class="main-content">
       <router-view v-slot="{ Component }">
-        <transition name="page-transition" mode="out-in">
-          <component :is="Component" :key="$route.fullPath" />
-        </transition>
-      </router-view>
+          <transition name="page-transition" mode="out-in">
+            <component 
+              :is="Component"
+              :key="$route.fullPath"
+              :sidebar-open="sidebarOpen"
+              :is-small-screen="isSmallScreen"
+            />
+          </transition>
+        </router-view>
     </main>
     <Footer />
+      <FloatingActionsContainer
+        :sidebar-open="sidebarOpen"
+        @toggle-sidebar="toggleSidebar"
+      />
   </div>
 </template>
 

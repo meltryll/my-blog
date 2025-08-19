@@ -34,16 +34,16 @@ const handleToggle = () => {
 <style scoped>
 .floating-sidebar-toggle {
   position: fixed;
-  bottom: 2rem;
-  right: 2rem;
-  width: 50px;
-  height: 50px;
+  bottom: 1rem;
+  right: 0.5rem;
+  width: 40px;
+  height: 40px;
   border-radius: 50%;
   background-color: var(--color-primary);
   color: white;
   border: none;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-  font-size: 1.2rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  font-size: 1rem;
   display: flex;
   align-items: center;
   justify-content: center;
